@@ -1,0 +1,1 @@
+export 'view/register_page_seller.dart';
