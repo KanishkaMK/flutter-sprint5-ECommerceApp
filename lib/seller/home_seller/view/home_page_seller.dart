@@ -1,3 +1,4 @@
+import 'package:ecommerceapp/seller/add_product_page/add_product.dart';
 import 'package:flutter/material.dart';
 
 class HomePageSeller extends StatelessWidget {
@@ -29,7 +30,9 @@ class HomePageSeller extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AddProductPage(),));
+              },
               child: Text(
                 'Add Product',
                 style: TextStyle(
