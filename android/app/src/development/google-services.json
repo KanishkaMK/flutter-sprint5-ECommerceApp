@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "73168174329",
+    "project_id": "ecommerceapp-3e4ac",
+    "storage_bucket": "ecommerceapp-3e4ac.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:73168174329:android:d69103fceb6e11a9ccb628",
+        "android_client_info": {
+          "package_name": "com.example.verygoodcore.ecommerceapp.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTNmw_WgGnMg7ekbegwozdSl7kDpHWyI0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

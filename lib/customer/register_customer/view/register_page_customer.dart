@@ -1,4 +1,5 @@
 import 'package:ecommerceapp/customer/login_customer/view/login_customer_page.dart';
+import 'package:ecommerceapp/customer/register_customer/repository/register_repo_customer.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPageCustomer extends StatefulWidget {
@@ -121,8 +122,17 @@ class _RegisterPageCustomerState extends State<RegisterPageCustomer> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor:
                           const Color.fromARGB(255, 164, 132, 14)),
-                  onPressed: () {
+                  onPressed: () async {
+                     if(_formKey.currentState!.validate()){
+                await RegisterRepoCustomer().createUser(
+                  _nameController.text,
+                  _placeController.text, 
+                  _phoneController.text, 
+                  _emailController.text,
+                  _passwordController.text, 
+                  context);
                     Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPageCustomer(),));
+                     }
       
                   },
                   child: Text(
