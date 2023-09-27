@@ -33,77 +33,93 @@ class _LoginPageSellerState extends State<LoginPageSeller> {
         ),
         body: Form(
           key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextFormField(
-                controller: _usernameController,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please fill the field';
-                  }
-                },
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    hintText: 'Username'),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              TextFormField(
-                controller: _passwordController,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please fill the field';
-                  }
-                },
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    hintText: 'Password'),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              BlocListener<LoginBloc, LoginState>(
-                listener: (context, state) {
-                  // TODO: implement listener
-                  if (state is NavigateToHomeScreen){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePageSeller(),));
-                  }
-                },
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromARGB(255, 241, 225, 169)),
-                    onPressed: () {
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //       builder: (context) => HomePageSeller(),
-                      //     ));
+          child: BlocProvider(
+            create: (context) => _loginBloc,
+            child: BlocConsumer<LoginBloc, LoginState>(
+              listener: (context, state) {
+                // TODO: implement listener
 
-                      if (_formKey.currentState!.validate() == false) {
-                        print('login test');
-                      } else {
-                        _loginBloc.add(
-                          LoginWithEmailAndPassword(
-                            email: _usernameController.text,
-                            password: _passwordController.text,
+                if (state is NavigateToHomeScreen) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomePageSeller(),
+                      ));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Successfully logged in.....')));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                          'Login Failed... Please check your credentials and try again')));
+                }
+              },
+              builder: (context, state) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextFormField(
+                      controller: _usernameController,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please fill the field';
+                        }
+                      },
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
-                        );
-                      }
-                    },
-                    child: Text(
-                      'Login',
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.w300),
-                    )),
-              ),
-            ],
+                          hintText: 'Username'),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    TextFormField(
+                      controller: _passwordController,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please fill the field';
+                        }
+                      },
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          hintText: 'Password'),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 241, 225, 169)),
+                        onPressed: () {
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (context) => HomePageSeller(),
+                          //     ));
+
+                          if (_formKey.currentState!.validate() == false) {
+                            print('login test');
+                          } else {
+                            _loginBloc.add(
+                              LoginWithEmailAndPassword(
+                                email: _usernameController.text,
+                                password: _passwordController.text,
+                              ),
+                            );
+                          }
+                        },
+                        child: Text(
+                          'Login',
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.w300),
+                        )),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),

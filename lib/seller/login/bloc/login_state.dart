@@ -6,3 +6,5 @@ sealed class LoginState {}
 final class LoginInitial extends LoginState {}
 
 class NavigateToHomeScreen extends LoginState {}
+
+class LoginFailedState extends LoginState {}

@@ -86,7 +86,7 @@ class _LoginPageCustomerState extends State<LoginPageCustomer> {
                 },
                 child: Text(
                   'Login',
-                  style: TextStyle(
+                  style: TextStyle( 
                       color: Colors.black, fontWeight: FontWeight.w300),
                 )),
           ],
