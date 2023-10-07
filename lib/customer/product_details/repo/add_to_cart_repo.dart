@@ -16,14 +16,14 @@ class AddToCartRepo {
      
       dynamic val;
       var userCartData = await cart
-          .where('code', isEqualTo: productData['code'].toString())
+          .where('productId', isEqualTo: productData['productid'].toString())
           .where('userId', isEqualTo: _auth.currentUser!.uid)
           .get();
       print(userCartData.docs.length);
       if (userCartData.docs.length == 0) {
         val = await cart.add({
           'cartId': uuid.v4(),
-          'productId': productData['code'].toString(),
+          'productId': productData['productid'].toString(),
           'userId':  _auth.currentUser!.uid,
           'quantity': 1,
           'productName': productData['name'].toString(),

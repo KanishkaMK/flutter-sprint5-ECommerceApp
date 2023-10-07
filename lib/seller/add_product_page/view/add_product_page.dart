@@ -183,6 +183,7 @@ class _AddProductPageState extends State<AddProductPage> {
                       _productStockController.clear();
                       ScaffoldMessenger.of(context)
                           .showSnackBar(SnackBar(content: Text('Product added')));
+                          Navigator.pop(context);
                     }
                   },
                   child: Text(

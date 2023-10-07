@@ -70,7 +70,7 @@ class HomePageCustomer extends StatelessWidget {
             ),
              itemCount: products.length,
             itemBuilder: (BuildContext context, int index) {
-              return ProductList(productData: products[index]);
+              return ProductList(productDataDocIndex: products[index]);
             },
           );
         },

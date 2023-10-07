@@ -3,9 +3,9 @@ import 'package:ecommerceapp/customer/product_details/view/product_details_page.
 import 'package:flutter/material.dart';
 
 class ProductList extends StatelessWidget {
-  ProductList({Key? key, required this.productData}) : super(key: key);
+  ProductList({Key? key, required this.productDataDocIndex}) : super(key: key);
 
-  final QueryDocumentSnapshot<Map<String, dynamic>> productData;
+  final QueryDocumentSnapshot<Map<String, dynamic>> productDataDocIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class ProductList extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                    ProductDetailsPage(productData: productData),
+                    ProductDetailsPage(productDataDocIndex: productDataDocIndex),
               ));
         },
         child: Center(
@@ -31,13 +31,14 @@ class ProductList extends StatelessWidget {
                   //  Text('PRODUCT DETAILS',
                   //  style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
 
-                  Image.network(
-                    productData['image'][0].toString(),
-                    height: 50,
-                    width: 50,
+                  Expanded(
+                    child: Image.network(
+                      productDataDocIndex['image'][0].toString(),
+                      fit: BoxFit.fill,
+                    ),
                   ),
-                  Text(productData['name'].toString()),
-                  Text(productData['price'].toString()),
+                  Text(productDataDocIndex['name'].toString()),
+                  Text(productDataDocIndex['price'].toString()),
                 ],
               ),
             ),

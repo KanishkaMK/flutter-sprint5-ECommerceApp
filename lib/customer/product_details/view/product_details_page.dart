@@ -3,8 +3,8 @@ import 'package:ecommerceapp/customer/product_details/repo/add_to_cart_repo.dart
 import 'package:flutter/material.dart';
 
 class ProductDetailsPage extends StatelessWidget {
-  const ProductDetailsPage({super.key,required this.productData});
-  final QueryDocumentSnapshot<Map<String, dynamic>> productData;
+  const ProductDetailsPage({super.key,required this.productDataDocIndex});
+  final QueryDocumentSnapshot<Map<String, dynamic>> productDataDocIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -29,38 +29,38 @@ class ProductDetailsPage extends StatelessWidget {
             //   height: 300,
             //   width: 300,
             // ),
-            child: Image.network(productData['image'][0].toString(),
+            child: Image.network(productDataDocIndex['image'][0].toString(),
             height: 300,
             width: 300,
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text('Product Name : ${productData['name'].toString()}',
+            child: Text('Product Name : ${productDataDocIndex['name'].toString()}',
             style: TextStyle(color: Colors.black,
             fontWeight: FontWeight.bold),),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text('Product Price : ${productData['price'].toString()}',
+            child: Text('Product Price : ${productDataDocIndex['price'].toString()}',
             style: TextStyle(color: Colors.black,
             fontWeight: FontWeight.bold),),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text('Product code : ${productData['code'].toString()}',
+            child: Text('Product code : ${productDataDocIndex['code'].toString()}',
             style: TextStyle(color: Colors.black,
             fontWeight: FontWeight.bold),),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text('Product Description : ${productData['description'].toString()}',
+            child: Text('Product Description : ${productDataDocIndex['description'].toString()}',
             style: TextStyle(color: Colors.black,
             fontWeight: FontWeight.bold),),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text('Product Stock : ${productData['stock'].toString()}',
+            child: Text('Product Stock : ${productDataDocIndex['stock'].toString()}',
             style: TextStyle(color: Colors.black,
             fontWeight: FontWeight.bold),),
           ),
@@ -71,7 +71,7 @@ class ProductDetailsPage extends StatelessWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: const Color.fromARGB(255, 235, 208, 128)),
             onPressed: () async {
-            await AddToCartRepo().addToCart(productData, context);
+            await AddToCartRepo().addToCart(productDataDocIndex, context);
             Navigator.pop(context);
           }, child: Text('ADD TO CART',style: TextStyle(color: Colors.black,
             fontWeight: FontWeight.bold),))
