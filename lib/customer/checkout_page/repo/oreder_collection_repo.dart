@@ -8,27 +8,59 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class OrderCollectionRepo {
-  Future<void> createOrderCollection(
+
+final CollectionReference _orderRef = FirebaseFirestore.instance.collection('ordercollection');
+
+  Future<String> placeOrder(
       QuerySnapshot<Map<String, dynamic>> cartData,
       BuildContext context) async {
     final uuid = Uuid();
     final orderId = uuid.v4();
 
     final _auth = FirebaseAuth.instance;
-    final CollectionReference orderRef =
-        FirebaseFirestore.instance.collection('ordercollection');
-
+    
     try {
-      await orderRef.doc(orderId).set({
+      await _orderRef.doc(orderId).set({
         'userid': _auth.currentUser!.uid,
         'orderid': orderId,
         'status': 'pending',
-        'quantity': '',
-        'subtotal': '',
-        'productid': '',
+        'quantity': {}, // Initialize as an empty map
+        'subtotal': {},
+        'productid': {},
       });
+      return orderId;
     } catch (e) {
       throw Exception('Failed to add to cart');
     }
   }
+
+
+  Future<void> updateOrder(List<Map<String,dynamic>> toBuyCartItems, String oderId) async {
+ 
+  try {
+
+    for(final toBuyCartItem in toBuyCartItems ){
+      final productId = toBuyCartItem['productid'] as String;
+      final quantity = toBuyCartItem['quantity'];
+      final subtotal = toBuyCartItem['subtotal'];
+
+    await _orderRef.doc(oderId).update({
+      // 'status': 'Success',
+      // 'quantity':quantity,
+      // 'subtotal':subTotal,
+
+          'quantity.$productId': quantity,
+          'subtotal.$productId': subtotal,
+          'productid.$productId': 'true',
+          'status': 'confirmed',
+      
+    });
+    }
+  } catch (e) {
+    print('Error updating order status: $e');
+  }
+}
+
+
+
 }

@@ -4,21 +4,26 @@ import 'package:ecommerceapp/customer/product_details/view/product_details_page.
 import 'package:flutter/material.dart';
 
 class CartList extends StatefulWidget {
-  const CartList({super.key, required this.cartDataDocIndex});
+   CartList({
+    super.key,
+    required this.cartDataDocIndex,
+    required this.quantity,
+  });
   final QueryDocumentSnapshot<Map<String, dynamic>> cartDataDocIndex;
+  late int quantity;
 
   @override
   State<CartList> createState() => _CartListState();
 }
 
 class _CartListState extends State<CartList> {
-  late int quantity;
+ // late int quantity;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    quantity = int.parse(widget.cartDataDocIndex['quantity'].toString());
+   // quantity = int.parse(widget.cartDataDocIndex['quantity'].toString());
   }
 
   // int quantity = 1;
@@ -92,10 +97,12 @@ class _CartListState extends State<CartList> {
             padding: const EdgeInsets.all(16.0),
             child: InkWell(
               onTap: () {
-                FirebaseFirestore.instance
-                    .collection('cart')
-                    .doc(widget.cartDataDocIndex.id)
-                    .update({'quantity': quantity++});
+                setState(() {
+                  FirebaseFirestore.instance
+                      .collection('cart')
+                      .doc(widget.cartDataDocIndex.id)
+                      .update({'quantity': widget.quantity++});
+                });
               },
               child: Icon(Icons.add),
             ),
@@ -104,23 +111,27 @@ class _CartListState extends State<CartList> {
             padding: const EdgeInsets.all(16.0),
             child: Text(widget.cartDataDocIndex['quantity'].toString()),
           ),
-          if (quantity > 1)
+          if (widget.quantity >= 1)
             InkWell(
               onTap: () {
-                FirebaseFirestore.instance
-                    .collection('cart')
-                    .doc(widget.cartDataDocIndex.id)
-                    .update({'quantity': quantity--});
+                setState(() {
+                  FirebaseFirestore.instance
+                      .collection('cart')
+                      .doc(widget.cartDataDocIndex.id)
+                      .update({'quantity': widget.quantity--});
+                });
               },
               child: Icon(Icons.remove),
             )
           else
             InkWell(
               onTap: () {
-                FirebaseFirestore.instance
-                    .collection('cart')
-                    .doc(widget.cartDataDocIndex.id)
-                    .delete();
+                setState(() {
+                  FirebaseFirestore.instance
+                      .collection('cart')
+                      .doc(widget.cartDataDocIndex.id)
+                      .delete();
+                });
               },
               child: Icon(Icons.delete_forever),
             )

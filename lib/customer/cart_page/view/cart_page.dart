@@ -3,6 +3,7 @@ import 'package:ecommerceapp/customer/checkout_page/repo/oreder_collection_repo.
 import 'package:ecommerceapp/customer/cart_page/view/widget/cart_list.dart';
 import 'package:ecommerceapp/customer/checkout_page/checkout_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -12,7 +13,7 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  double grandTotal = 0;
+  late double grandTotal;
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +41,9 @@ class _CartPageState extends State<CartPage> {
           final cartDataDoc = snapshot.data!.docs;
           final cartData = snapshot.data!;
 
+          print(
+              ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.$cartData");
+
           // return GridView.builder(
           //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           //     crossAxisCount: 2,
@@ -53,6 +57,7 @@ class _CartPageState extends State<CartPage> {
           //   },
           // );
 
+          grandTotal = 0;
           return Column(
             children: [
               Expanded(
@@ -66,23 +71,91 @@ class _CartPageState extends State<CartPage> {
                     final subtotal = quantity * price;
                     grandTotal += subtotal;
 
-                    return CartList(cartDataDocIndex: cartDataDoc[index]);
+                    // return CartList(cartDataDocIndex: cartDataDoc[index], quantity: quantity,);
+
+                    return ListTile(
+                      title: Text(cartItem['productName'].toString()),
+                      // leading: CircleAvatar(
+                      //   backgroundColor: Colors.blue),
+                      leading: CircleAvatar(
+                        backgroundImage:
+                            NetworkImage(cartItem['imageUrl'].toString()),
+                      ),
+                      subtitle: Text(cartItem['price'].toString()),
+
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  FirebaseFirestore.instance
+                                      .collection('cart')
+                                      .doc(cartItem.id)
+                                      .update({'quantity': quantity + 1});
+                                });
+                              },
+                              child: Icon(Icons.add),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(cartItem['quantity'].toString()),
+                          ),
+                          if (quantity >= 1)
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  FirebaseFirestore.instance
+                                      .collection('cart')
+                                      .doc(cartItem.id)
+                                      .update({'quantity': quantity - 1});
+                                });
+                              },
+                              child: Icon(Icons.remove),
+                            )
+                          else
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  FirebaseFirestore.instance
+                                      .collection('cart')
+                                      .doc(cartItem.id)
+                                      .delete();
+                                });
+                              },
+                              child: Icon(Icons.delete_forever),
+                            )
+                        ],
+                      ),
+                    );
                   },
                 ),
               ),
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          const Color.fromARGB(255, 241, 225, 169)),
-                  onPressed: () {
-                    //  await OrderCollectionRepo().createOrderCollection(cartData, context);
+                      backgroundColor: Color.fromARGB(255, 228, 213, 157)),
+                  onPressed: () async {
+                    final orderId = await OrderCollectionRepo()
+                        .placeOrder(cartData, context);
 
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              CheckOutPage(grandTotal: grandTotal),
-                        ));
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => CheckOutPage(
+                    //         grandTotal: grandTotal,
+                    //         cartData: cartData,
+                    //         orderId: orderId,
+                    //       ),
+                    //     ));
+
+                    await Get.off(CheckOutPage(
+                      grandTotal: grandTotal,
+                      cartData: cartData,
+                      orderId: orderId,
+                    ));
                   },
                   child: Text(
                     'Checkout',

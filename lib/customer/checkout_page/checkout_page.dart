@@ -1,7 +1,5 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ecommerceapp/customer/checkout_page/repo/update_oreder_repo.dart';
+import 'package:ecommerceapp/customer/checkout_page/repo/oreder_collection_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -102,7 +100,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 // }
 
 class CheckOutPage extends StatefulWidget {
-   CheckOutPage({super.key,required this.grandTotal});
+   CheckOutPage({super.key,required this.grandTotal, required this.cartData, required this.orderId});
+
+  final QuerySnapshot<Map<String,dynamic>> cartData;
+  final String orderId;
 
   double grandTotal;
 
@@ -112,8 +113,12 @@ class CheckOutPage extends StatefulWidget {
 
 class _CheckOutPageState extends State<CheckOutPage> {
 
+  
 late Razorpay _razorpay ;
-//double grandTotal = 0;
+
+List<Map<String,dynamic>> toBuyCartItems = [];
+
+
 
 //CartCheckoutItem? cartCheckoutItem;
 
@@ -142,15 +147,17 @@ late Razorpay _razorpay ;
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+
+   
   
   }
 
-  void _handlePaymentSuccess(PaymentSuccessResponse response){
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     Fluttertoast.showToast(msg: 'Success: ${response.paymentId}',toastLength: Toast.LENGTH_SHORT);
-    // final newStatus = 'Success';
-    // final newQuantity = cartCheckoutItem!.getQuantity();
-    // final subTotal = grandTotal;
-    // UpdateOrderRepo().updateOrder(newStatus,newQuantity,subTotal);
+    //  final newStatus = 'Success';
+    //  final newQuantity = widget.cartData.docs
+    //  final grandTotalFinal = widget.grandTotal;
+      await OrderCollectionRepo().updateOrder(toBuyCartItems,widget.orderId);
 
   }
 
@@ -262,6 +269,39 @@ late Razorpay _razorpay ;
                   ))
             ],
           ),
+
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: widget.cartData.docs.length ,
+                itemBuilder: (context, index) {
+                  final toBuyItems = widget.cartData.docs[index];
+
+                    final quantity = int.parse(toBuyItems['quantity'].toString());
+                    final price = double.parse(toBuyItems['price'].toString());
+                    final subtotal = quantity * price;
+
+                    final singleProductToBuy ={'quantity':quantity,
+                                                'subtotal':subtotal,
+                                                'productid':toBuyItems['productId'].toString()};
+
+                    toBuyCartItems.add(singleProductToBuy);
+
+                  return ListTile(
+                    title: Text('${index+1},  ${toBuyItems['productName'].toString()}'),
+                    subtitle: Text('     Quanity : ${toBuyItems['quantity'].toString()}'),
+                    trailing: Text('Price : ${subtotal}'),
+                  );
+                },),
+            ),
+          )
+
+
+
+
+
           // Expanded(
           //   child: StreamBuilder(
           //       stream:
