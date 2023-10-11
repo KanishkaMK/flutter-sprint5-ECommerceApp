@@ -47,10 +47,20 @@ class _LoginPageSellerState extends State<LoginPageSeller> {
                       ));
                   ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Successfully logged in.....')));
-                } else {
+                } 
+                else if(state is LoginFailedState) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text(
                           'Login Failed... Please check your credentials and try again')));
+                }else if(state is SellerNotExxistLoginFailedState)
+                {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                          'This seller not exists')));
+                }else{
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                          'Login failed')));
                 }
               },
               builder: (context, state) {

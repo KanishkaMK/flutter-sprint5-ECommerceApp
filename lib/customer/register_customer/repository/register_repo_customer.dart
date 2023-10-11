@@ -9,23 +9,20 @@ class RegisterRepoCustomer {
     final _auth = FirebaseAuth.instance;
     final CollectionReference userRef =
         FirebaseFirestore.instance.collection('usercollection');
-        try {
-          final userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email, password: password);
-        await userRef.doc(userCredential.user!.uid).set({
+    try {
+      final userCredential = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      await userRef.doc(userCredential.user!.uid).set({
         'userid': _auth.currentUser!.uid,
-        'usertype':'customer',
+        'usertype': 'customer',
         'name': name,
         'place': place,
         'email': email,
         'phone': phone,
         'password': password,
-        });
-          
-        } catch (e) {
-          throw Exception('Register failed');
-          
-        }
-    
+      });
+    } catch (e) {
+      throw Exception('Register failed');
+    }
   }
 }

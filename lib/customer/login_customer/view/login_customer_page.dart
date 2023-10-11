@@ -69,25 +69,37 @@ class _LoginPageCustomerState extends State<LoginPageCustomer> {
                 style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 241, 225, 169)),
                 onPressed: () async {
-                  
-                  try {
-                    final _auth = FirebaseAuth.instance;
-                    final userRef = await _auth.signInWithEmailAndPassword(
-                        email: _usernameController.text,
-                        password: _passwordController.text);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomePageCustomer(),
-                        ));
-                  } catch (e) {
-                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Invalid Username or password')));
+                  final customerRef = FirebaseFirestore.instance
+                      .collection('usercollection')
+                      .where('email', isEqualTo: _usernameController.text)
+                      .where('usertype', isEqualTo: 'customer')
+                      .get();
+                  final result = await customerRef;
+                  if (result.docs.isNotEmpty) {
+                    try {
+                      final _auth = FirebaseAuth.instance;
+                      final userRef = await _auth.signInWithEmailAndPassword(
+                          email: _usernameController.text,
+                          password: _passwordController.text);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomePageCustomer(),
+                          ));
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Invalid Username or password')));
+                    }
+                  }else{
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          backgroundColor: Color.fromARGB(255, 236, 187, 7) ,
+                          content: Text('This customer not exists',
+                          style: TextStyle(color: Colors.red),)));
                   }
                 },
                 child: Text(
                   'Login',
-                  style: TextStyle( 
+                  style: TextStyle(
                       color: Colors.black, fontWeight: FontWeight.w300),
                 )),
           ],

@@ -22,7 +22,7 @@ class ProductList extends StatelessWidget {
         child: Center(
           child: Container(
             height: 200,
-            width: 200,
+           // width: 200,
             child: Card(
               margin: EdgeInsets.all(16.0),
               elevation: 4.0,
@@ -34,7 +34,8 @@ class ProductList extends StatelessWidget {
                   Expanded(
                     child: Image.network(
                       productDataDocIndex['image'][0].toString(),
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
+                      width: 200
                     ),
                   ),
                   Text(productDataDocIndex['name'].toString()),
