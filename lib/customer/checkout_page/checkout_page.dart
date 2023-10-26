@@ -100,10 +100,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 // }
 
 class CheckOutPage extends StatefulWidget {
-   CheckOutPage({super.key,required this.grandTotal, required this.cartData, required this.orderId});
+   CheckOutPage({super.key,required this.grandTotal, required this.productsToBuyList, required this.orderId});
 
-  final QuerySnapshot<Map<String,dynamic>> cartData;
+  
   final String orderId;
+  List<Map<String, dynamic>> productsToBuyList;
 
   double grandTotal;
 
@@ -143,7 +144,7 @@ List<Map<String,dynamic>> toBuyCartItems = [];
 
     //loadGrandTotal();
 
-     _razorpay = Razorpay();
+    _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
@@ -157,7 +158,7 @@ List<Map<String,dynamic>> toBuyCartItems = [];
     //  final newStatus = 'Success';
     //  final newQuantity = widget.cartData.docs
     //  final grandTotalFinal = widget.grandTotal;
-      await OrderCollectionRepo().updateOrder(toBuyCartItems,widget.orderId);
+      await OrderCollectionRepo().updateOrder(toBuyCartItems.toSet().toList(),widget.orderId);
 
   }
 
@@ -273,28 +274,56 @@ List<Map<String,dynamic>> toBuyCartItems = [];
           SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: ListView.builder(
+              // child: ListView.builder(
+              //   shrinkWrap: true,
+              //   itemCount: widget.cartData.docs.length ,
+              //   itemBuilder: (context, index) {
+              //     final toBuyItems = widget.cartData.docs[index];
+
+              //       final quantity = int.parse(toBuyItems['quantity'].toString());
+              //      final price = double.parse(toBuyItems['price'].toString());
+              //      final subtotal = quantity * price;
+
+              //       final singleProductToBuy ={'quantity':quantity,
+              //                                   'subtotal':subtotal,
+              //                                   'productid':toBuyItems['productId'].toString()};
+
+              //       toBuyCartItems.add(singleProductToBuy);
+
+              //     return ListTile(
+              //      title: Text('${index+1},  ${toBuyItems['productName'].toString()}'),
+              //      subtitle: Text('     Quanity : ${toBuyItems['quantity'].toString()}'),
+              //      trailing: Text('Price : ${subtotal}'),
+                  
+              //     );
+              //   },),
+
+
+               child: ListView.builder(
                 shrinkWrap: true,
-                itemCount: widget.cartData.docs.length ,
+                itemCount: widget.productsToBuyList.length ,
                 itemBuilder: (context, index) {
-                  final toBuyItems = widget.cartData.docs[index];
+                  final toBuyItems = widget.productsToBuyList[index];
 
                     final quantity = int.parse(toBuyItems['quantity'].toString());
-                    final price = double.parse(toBuyItems['price'].toString());
-                    final subtotal = quantity * price;
+                   final price = double.parse(toBuyItems['price'].toString());
+                   final subtotal = quantity * price;
 
                     final singleProductToBuy ={'quantity':quantity,
                                                 'subtotal':subtotal,
-                                                'productid':toBuyItems['productId'].toString()};
+                                                'productid':toBuyItems['productid'].toString()};
 
                     toBuyCartItems.add(singleProductToBuy);
 
                   return ListTile(
-                    title: Text('${index+1},  ${toBuyItems['productName'].toString()}'),
-                    subtitle: Text('     Quanity : ${toBuyItems['quantity'].toString()}'),
-                    trailing: Text('Price : ${subtotal}'),
+                   title: Text('${index+1},  ${toBuyItems['name'].toString()}'),
+                   subtitle: Text('     Quanity : ${toBuyItems['quantity'].toString()}'),
+                   trailing: Text('Price : ${subtotal}'),
+                  
                   );
                 },),
+
+
             ),
           )
 

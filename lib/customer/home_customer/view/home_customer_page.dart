@@ -4,9 +4,20 @@ import 'package:ecommerceapp/customer/product_details/product_details.dart';
 import 'package:ecommerceapp/customer/home_customer/view/widgets/product_list.dart';
 import 'package:flutter/material.dart';
 
-class HomePageCustomer extends StatelessWidget {
-  const HomePageCustomer({super.key});
+class HomePageCustomer extends StatefulWidget {
+   HomePageCustomer({
+    super.key,
+  
+  });
 
+  @override
+  State<HomePageCustomer> createState() => _HomePageCustomerState();
+}
+
+class _HomePageCustomerState extends State<HomePageCustomer> {
+ // late QuerySnapshot<Map<String,dynamic>> productsData;
+
+  // QuerySnapshot<Map<String,dynamic>> productsData;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,8 +41,7 @@ class HomePageCustomer extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CartPage(),
-                    ));
+                      builder: (context) => CartPage()));
               },
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -46,29 +56,29 @@ class HomePageCustomer extends StatelessWidget {
       //   child: CradWidget()),
 
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('productcollection').snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('productcollection')
+            .snapshots(),
         builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return CircularProgressIndicator();
+          }
 
-           if (!snapshot.hasData) {
-          return CircularProgressIndicator();
-        }
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
 
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-
-        final products = snapshot.data!.docs;
-
-
+          final products = snapshot.data!.docs;
+        
 
           return GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              mainAxisSpacing: 5,
+              mainAxisSpacing: 0,
               crossAxisSpacing: 0,
               childAspectRatio: 0.5,
             ),
-             itemCount: products.length,
+            itemCount: products.length,
             itemBuilder: (BuildContext context, int index) {
               return ProductList(productDataDocIndex: products[index]);
             },

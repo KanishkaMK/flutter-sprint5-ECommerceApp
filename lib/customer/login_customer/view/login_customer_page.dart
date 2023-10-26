@@ -70,7 +70,7 @@ class _LoginPageCustomerState extends State<LoginPageCustomer> {
                     backgroundColor: const Color.fromARGB(255, 241, 225, 169)),
                 onPressed: () async {
                   final customerRef = FirebaseFirestore.instance
-                      .collection('usercollection')
+                      .collection('customercollection')
                       .where('email', isEqualTo: _usernameController.text)
                       .where('usertype', isEqualTo: 'customer')
                       .get();

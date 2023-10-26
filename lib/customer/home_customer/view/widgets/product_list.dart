@@ -21,6 +21,7 @@ class ProductList extends StatelessWidget {
         },
         child: Center(
           child: Container(
+            color: Color.fromARGB(255, 180, 180, 178),
             height: 200,
            // width: 200,
             child: Card(
@@ -45,6 +46,27 @@ class ProductList extends StatelessWidget {
             ),
           ),
         ),
+
+
+        // child: Card(
+        //     //  margin: EdgeInsets.all(16.0),
+        //       elevation: 0.1,
+        //       child: Column(
+        //         crossAxisAlignment: CrossAxisAlignment.stretch,
+        //         children: [
+        //           //  Text('PRODUCT DETAILS',
+        //           //  style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+
+        //           Image.network(
+        //             productDataDocIndex['image'][0].toString(),
+        //             fit: BoxFit.cover,
+        //             width: 200
+        //           ),
+        //           Text(productDataDocIndex['name'].toString()),
+        //           Text(productDataDocIndex['price'].toString()),
+        //         ],
+        //       ),
+        //     ),
       ),
     );
   }

@@ -12,6 +12,7 @@ class AddToCartRepo {
     final CollectionReference cart =
         FirebaseFirestore.instance.collection('cart');
          var uuid = Uuid();
+        
     try {
      
       dynamic val;
@@ -21,14 +22,15 @@ class AddToCartRepo {
           .get();
       print(userCartData.docs.length);
       if (userCartData.docs.length == 0) {
-        val = await cart.add({
-          'cartId': uuid.v4(),
+         var cartId = uuid.v4();
+        await cart.doc(cartId).set({
+          'cartId': cartId,
           'productId': productData['productid'].toString(),
           'userId':  _auth.currentUser!.uid,
           'quantity': 1,
-          'productName': productData['name'].toString(),
-          'imageUrl': productData['image'].toString(),
-          'price': productData['price'].toString(),
+         // 'productName': productData['name'].toString(),
+         // 'imageUrl': productData['image'].toString(),
+         // 'price': productData['price'].toString(),
         });
       } else {
         for (var i in userCartData.docs) {
@@ -37,10 +39,10 @@ class AddToCartRepo {
           });
         }
       }
-       if (val == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Failed to add to cart')));
-      }
+      //  if (val == null) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //                 SnackBar(content: Text('Failed to add to cart')));
+      // }
     } on FirebaseException catch (e) {
       throw Exception('Failed to add to cart');
     }

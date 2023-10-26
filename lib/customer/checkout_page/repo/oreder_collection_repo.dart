@@ -12,6 +12,7 @@ class OrderCollectionRepo {
 final CollectionReference _orderRef = FirebaseFirestore.instance.collection('ordercollection');
 
   Future<String> placeOrder(
+
       QuerySnapshot<Map<String, dynamic>> cartData,
       BuildContext context) async {
     final uuid = Uuid();
@@ -51,8 +52,8 @@ final CollectionReference _orderRef = FirebaseFirestore.instance.collection('ord
 
           'quantity.$productId': quantity,
           'subtotal.$productId': subtotal,
-          'productid.$productId': 'true',
-          'status': 'confirmed',
+          'productid.$productId': productId,
+          'status': 'Success',
       
     });
     }

@@ -13,7 +13,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       // TODO: implement event handler
       if (event is LoginWithEmailAndPassword) {
         final sellerRef = FirebaseFirestore.instance
-            .collection('usercollection')
+            .collection('sellercollection')
             .where('email', isEqualTo: event.email)
             .where('usertype', isEqualTo: 'seller')
             .get();

@@ -14,6 +14,9 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> {
   late double grandTotal;
+  //late double subtotal;
+
+  List<Map<String, dynamic>> productsToBuyList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +60,7 @@ class _CartPageState extends State<CartPage> {
           //   },
           // );
 
-          grandTotal = 0;
+            grandTotal = 0;
           return Column(
             children: [
               Expanded(
@@ -66,71 +69,129 @@ class _CartPageState extends State<CartPage> {
                   itemBuilder: (context, index) {
                     final cartItem = cartDataDoc[index];
 
-                    final quantity = int.parse(cartItem['quantity'].toString());
-                    final price = double.parse(cartItem['price'].toString());
-                    final subtotal = quantity * price;
-                    grandTotal += subtotal;
+                 //   grandTotal = 0;
+
+                    // final quantity = int.parse(cartItem['quantity'].toString());
+                    // final price = double.parse(cartItem['price'].toString());
+                    // final subtotal = quantity * price;
+                    // grandTotal += subtotal;
 
                     // return CartList(cartDataDocIndex: cartDataDoc[index], quantity: quantity,);
+                    
+                   // subtotal = 0;
+                    return FutureBuilder<DocumentSnapshot>(
+                        future:
+                            getProductDetails(cartItem['productId'] as String),
+                        builder: (context, productSnapshot) {
+                          if (!productSnapshot.hasData) {
+                            return CircularProgressIndicator();
+                          }
 
-                    return ListTile(
-                      title: Text(cartItem['productName'].toString()),
-                      // leading: CircleAvatar(
-                      //   backgroundColor: Colors.blue),
-                      leading: CircleAvatar(
-                        backgroundImage:
-                            NetworkImage(cartItem['imageUrl'].toString()),
-                      ),
-                      subtitle: Text(cartItem['price'].toString()),
+                          if (productSnapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          }
 
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  FirebaseFirestore.instance
-                                      .collection('cart')
-                                      .doc(cartItem.id)
-                                      .update({'quantity': quantity + 1});
-                                });
-                              },
-                              child: Icon(Icons.add),
+                           final productData = productSnapshot.data!;
+
+                          final quantity =
+                              int.parse(cartItem['quantity'].toString());
+                          final price =
+                              double.parse(productData['price'].toString());
+                          final subtotal = quantity * price;
+                          grandTotal += subtotal;
+
+                         
+                          final productStock =
+                              int.parse(productData['stock'].toString());
+
+
+                              final singleToBuy = {
+                                'productid': '${productData['productid']}',
+                                'name': '${productData['name']}',
+                                'price': '${productData['price']}',
+                                'quantity': '${cartItem['quantity']}',
+                              };
+
+                              productsToBuyList.add(singleToBuy);
+
+
+
+
+
+                          return ListTile(
+                            title: Text(productData['name'].toString()),
+                            // leading: CircleAvatar(
+                            //   backgroundColor: Colors.blue),
+                            leading: CircleAvatar(
+                              backgroundImage:
+                                  NetworkImage(productData['image'].toString()),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(cartItem['quantity'].toString()),
-                          ),
-                          if (quantity >= 1)
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  FirebaseFirestore.instance
-                                      .collection('cart')
-                                      .doc(cartItem.id)
-                                      .update({'quantity': quantity - 1});
-                                });
-                              },
-                              child: Icon(Icons.remove),
-                            )
-                          else
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  FirebaseFirestore.instance
-                                      .collection('cart')
-                                      .doc(cartItem.id)
-                                      .delete();
-                                });
-                              },
-                              child: Icon(Icons.delete_forever),
-                            )
-                        ],
-                      ),
-                    );
+                            subtitle: Text(productData['price'].toString()),
+
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        if (quantity < productStock) {
+                                          FirebaseFirestore.instance
+                                              .collection('cart')
+                                              .doc(cartItem.id)
+                                              .update(
+                                                  {'quantity': quantity + 1});
+                                        } else {
+                                          print('exceeding stock');
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                            duration: Duration(seconds: 1),
+                                            content: Text(
+                                              'Exeeding Stock',
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                            backgroundColor: Colors.red,
+                                          ));
+                                        }
+                                      });
+                                    },
+                                    child: Icon(Icons.add),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Text(cartItem['quantity'].toString()),
+                                ),
+                                if (quantity >= 1)
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        FirebaseFirestore.instance
+                                            .collection('cart')
+                                            .doc(cartItem.id)
+                                            .update({'quantity': quantity - 1});
+                                      });
+                                    },
+                                    child: Icon(Icons.remove),
+                                  )
+                                else
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        FirebaseFirestore.instance
+                                            .collection('cart')
+                                            .doc(cartItem.id)
+                                            .delete();
+                                      });
+                                    },
+                                    child: Icon(Icons.delete_forever),
+                                  )
+                              ],
+                            ),
+                          );
+                        });
                   },
                 ),
               ),
@@ -153,7 +214,7 @@ class _CartPageState extends State<CartPage> {
 
                     await Get.off(CheckOutPage(
                       grandTotal: grandTotal,
-                      cartData: cartData,
+                      productsToBuyList: productsToBuyList.toSet().toList(),
                       orderId: orderId,
                     ));
                   },
@@ -167,5 +228,13 @@ class _CartPageState extends State<CartPage> {
         },
       ),
     );
+  }
+
+  Future<DocumentSnapshot> getProductDetails(String productId) async {
+    final productDocument = await FirebaseFirestore.instance
+        .collection('productcollection')
+        .doc(productId)
+        .get();
+    return productDocument;
   }
 }
