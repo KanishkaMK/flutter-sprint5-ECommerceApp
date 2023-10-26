@@ -1,4 +1,5 @@
 import 'package:ecommerceapp/seller/login/login_seller.dart';
+import 'package:ecommerceapp/seller/register/repo/regi_repo_seller.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPageSeller extends StatefulWidget {
@@ -120,8 +121,17 @@ final TextEditingController _nameController = TextEditingController();
                   style: ElevatedButton.styleFrom(
                       backgroundColor:
                           const Color.fromARGB(255, 164, 132, 14)),
-                  onPressed: () {
+                  onPressed: () async {
+                     if(_formKey.currentState!.validate()){
+                await RegisterRepoSeller().createUser(
+                  _nameController.text,
+                  _placeController.text, 
+                  _phoneController.text, 
+                  _emailController.text,
+                  _passwordController.text, 
+                  context);
                     Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPageSeller(),));
+                     }
       
                   },
                   child: Text(
